@@ -14,8 +14,8 @@ running Linux as long as the WiFi hardware is capable.
 
 # Requirements
 * Android phone (rooted) - I am using Xiaomi Redmi 4x with the latest MIUI
-available
-  * Find tutorial online on how to root your specific Android phone
+available.
+  * Find tutorial online on how to root your specific Android phone.
 * Termux with Termux:Boot installed on the Android phone so that wake-lock
 and sshd can be started automatically when the phone is turned on.
   * https://wiki.termux.com/wiki/Termux:Boot#:~:text=Example%3A%20to%20start%20an%20ssh
@@ -23,7 +23,7 @@ d%20server%20and%20prevent%20the%20device%20from%20sleeping%20at%20boot%2C
 %20create%20the%20following%20file%20at
 * Connect to to the phone via SSH to perform the steps.
 * Nice to have:
-  * Battery management script to manage the battery when the phone is plugged 24 hours so that it does not overcharge
+  * Battery management script to manage the battery when the phone is plugged 24 hours so that it does not overcharge.
 
 # Steps
 1. Install tools for compiling from source
