@@ -29,7 +29,7 @@ d%20server%20and%20prevent%20the%20device%20from%20sleeping%20at%20boot%2C
 1. Install tools for compiling from source
    We will need these to compile and install libubox and relayd (from OpenWRT
 git).
-   ```shell
+   ```
    $ pkg install git clang cmake
    
    $ pkg install stow    # This is nice to have because we want to be able to install binaries and libraries compiled from source cleanly
@@ -37,7 +37,7 @@ git).
    ```
 2. Compile and install `libubox`
    Required to be able to compile `relayd` after this.
-   ```shell
+   ```
    $ pkg install lua5.1 json-c
    $ git clone git://git.openwrt.org/project/libubox.git
    $ cd libubox
@@ -51,7 +51,7 @@ git).
    ```
 3. Compile and install `relayd`
    Software bridge between 2 network interface.
-   ```shell
+   ```
    $ git clone https://git.openwrt.org/project/relayd.git
    $ cd relayd
    $ mkdir build
@@ -63,7 +63,7 @@ git).
    $ stow relayd
    ```
 4. Disable WiFi multicast filter
-   a. Redmi 4x uses Snapdragon SOC - Edit /data/misc/wifi/WCNSS_qcom_cfg.ini and reboot the phone.
+   a. Redmi 4x uses Snapdragon SOC - Edit `/data/misc/wifi/WCNSS_qcom_cfg.ini` and reboot the phone.
       ```
       --- WCNSS_qcom_cfg.ini.orig 2023-10-03 19:37:29.598680264 +0700
       +++ WCNSS_qcom_cfg.ini 2023-10-03 19:38:05.328680250 +0700
@@ -79,7 +79,7 @@ git).
       #Flag to enable HostARPOffload feature or not
       ```
    b. Alternatively, you can force the Android phone to keep screen on when plugged to a charger - WiFi multicast filter will never be engaged.
-      ```shell
+      ```
       # svc power
       Control the power manager
       usage: svc power stayon [true|false|usb|ac|wireless]
@@ -91,17 +91,17 @@ git).
       # svc power stayon true
       ```
 6. Configure WiFi interface, forwarding, and `iptables`.
-   ```shell
+   ```
    # iw dev wlan0 interface add wlan0-ap type __ap    # Quirk:the name need to be wlan0-ap, otherwise it will not work, at least for Redmi 4x
    # ip link set up dev wlan0-ap
    # echo 1 > /proc/sys/net/ipv4/ip_forward # Enable ip forwarding and arp filter
    # echo 1 > /proc/sys/net/ipv4/conf/wlan0/arp_filter
    # echo 1 > /proc/sys/net/ipv4/conf/wlan0-ap/arp_filter
-   # iptables -I FORWARD -i wlan0-ap -s 192.168.1.0/24 -j ACCEPT    # Without these last 2 command, connected devices cannot access LAN 192.168.1.0/24
-   # iptables -I FORWARD -i wlan0 -d 192.168.1.0/24 -j ACCEPT
+   # iptables -I FORWARD -i wlan0-ap -j ACCEPT
+   # iptables -I FORWARD -i wlan0 -j ACCEPT
    ```
 7. Run `hostapd`
-   ```shell
+   ```
    # mkdir tmp
    # cd tmp
    
@@ -112,7 +112,7 @@ git).
    interface=wlan0-ap
    # wi-fi driver
    driver=nl80211
-   # WLAN channel to use # Quirk: In reality, the actual WiFi channel will follow the WiFi channel being extended
+   # WLAN channel to use    # Quirk: In reality, the actual WiFi channel will follow the WiFi channel being extended
    channel=11
    # ser operation mode, what frequency to use
    hw_mode=g
@@ -124,10 +124,10 @@ git).
    wpa_key_mgmt=WPA-PSK
    EOF
    
-   # hostapd hostapd.conf # Quirk: hostapd.conf must be alone in the current directory (maybe SELinux restriction?)
+   # hostapd hostapd.conf     # Quirk: hostapd.conf must be alone in the current directory (maybe SELinux restriction?)
    ```
 8. Run `relayd`
-   ```shell
+   ```
    # relayd
    Usage: relayd <options>
    Options:
@@ -145,7 +145,7 @@ git).
     -D Enable DHCP forwarding
     -P Disable DHCP options parsing
     -L <ipaddr> Enable local access using <ipaddr> as source address
-    # relayd -I wlan0 -I wlan0-ap -D -B -d
+   # relayd -I wlan0 -I wlan0-ap -D -B -d
    ```
 9. Extended WiFi is ready to use.
 
