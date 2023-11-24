@@ -1,0 +1,5 @@
+#!/data/data/com.termux/files/usr/bin/sh
+export LD_PRELOAD=/data/data/com.termux/files/usr/lib/libtermux-exec.so
+export PATH=$PATH:/system/bin
+cd /data/data/com.termux/files/home/wifi-ext
+screen -dmfa -S wifi-ext sudo -E bash wifi-ext.sh
