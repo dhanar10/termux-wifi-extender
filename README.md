@@ -63,7 +63,7 @@ git).
    $ stow relayd
    ```
 4. Disable WiFi multicast filter
-   a. Redmi 4x uses Snapdragon SOC - Edit `/data/misc/wifi/WCNSS_qcom_cfg.ini` and reboot the phone.
+   * Redmi 4x uses Snapdragon SOC - Edit `/data/misc/wifi/WCNSS_qcom_cfg.ini` and reboot the phone.
       ```
       --- WCNSS_qcom_cfg.ini.orig 2023-10-03 19:37:29.598680264 +0700
       +++ WCNSS_qcom_cfg.ini 2023-10-03 19:38:05.328680250 +0700
@@ -78,7 +78,7 @@ git).
       +McastBcastFilter=0
       #Flag to enable HostARPOffload feature or not
       ```
-   b. Alternatively, you can force the Android phone to keep screen on when plugged to a charger - WiFi multicast filter will never be engaged.
+   * Alternatively, you can force the Android phone to keep screen on when plugged to a charger - WiFi multicast filter will never be engaged.
       ```
       # svc power
       Control the power manager
