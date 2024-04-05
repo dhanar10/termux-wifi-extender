@@ -92,8 +92,9 @@ git).
       ```
 6. Configure WiFi interface, forwarding, and `iptables`.
    ```
-   # iw dev wlan0 interface add wlan0-ap type __ap    # Quirk:the name need to be wlan0-ap, otherwise it will not work, at least for Redmi 4x
+   # iw dev wlan0 interface add wlan0-ap type __ap    # Quirk: the name needs to be wlan0-ap or it will not work (at least for Redmi 4x)
    # ip link set up dev wlan0-ap
+   # ip addr add 192.168.169.169/24 dev wlan0-ap      # FIXME Arbitrary IP address outside wlan0 subnet
    # echo 1 > /proc/sys/net/ipv4/ip_forward # Enable ip forwarding and arp filter
    # echo 1 > /proc/sys/net/ipv4/conf/wlan0/arp_filter
    # echo 1 > /proc/sys/net/ipv4/conf/wlan0-ap/arp_filter
