@@ -1,16 +1,16 @@
 # termux-wifi-extender
-Use an Android phone as a dedicated WiFi extender
+Use an Android phone as a WiFi extender
 
 # Overview
-* Many Android has WiFi hardware capabilities required for extending WiFi.
+* Many Android phones have WiFi hardware capabilities required for extending WiFi.
 * Some of them, however, have software restrictions to be used as such. My
 Nokia G20 for example, loses this capability when upgraded to Android 13
 (when hotspot is enabled, WiFi is automatically disabled).
 * Here, we will be bypassing Android restrictions and interface
 directly with the Linux kernel to extend a WiFi network.
 * This method follows roughly how OpenWRT implements WiFi extender.
-* In theory, this method can also be adapted with PC or single-board-computers
-running Linux as long as the WiFi hardware is capable.
+* In theory, this method can also be adapted for PC or single board computers
+running Linux as long as the WiFi hardware has the capabilities.
 
 # Requirements
 * Android phone (rooted) - I am using Xiaomi Redmi 4x with the latest MIUI
@@ -97,8 +97,8 @@ git).
    # echo 1 > /proc/sys/net/ipv4/ip_forward # Enable ip forwarding and arp filter
    # echo 1 > /proc/sys/net/ipv4/conf/wlan0/arp_filter
    # echo 1 > /proc/sys/net/ipv4/conf/wlan0-ap/arp_filter
-   # iptables -I FORWARD -i wlan0-ap -j ACCEPT
-   # iptables -I FORWARD -i wlan0 -j ACCEPT
+   # iptables -I FORWARD -i wlan0-ap -j ACCEPT -s 192.168.1.0/24
+   # iptables -I FORWARD -i wlan0 -j ACCEPT -d 192.168.1.0/24
    ```
 7. Run `hostapd`
    ```
@@ -106,22 +106,27 @@ git).
    # cd tmp
    
    # cat << EOF > hostapd.conf
-   # network name
-   ssid=asura_EXT
    # network interface to listen on
    interface=wlan0-ap
    # wi-fi driver
    driver=nl80211
-   # WLAN channel to use    # Quirk: In reality, the actual WiFi channel will follow the WiFi channel being extended
+   # WLAN channel to use
    channel=11
+   # 802.11n support
+   ieee80211n=1
+   # QoS support, also required for full speed on 802.11n/ac/ax
+   wmm_enabled=1
    # ser operation mode, what frequency to use
    hw_mode=g
+   # network name
+   ssid=myssid
    # enforce Wireless Protected Access (WPA)
    wpa=2
    # passphrase to use for protected access
-   wpa_passphrase=<REDACTED>
+   wpa_passphrase=mypassword
    # WPA protocol
    wpa_key_mgmt=WPA-PSK
+   rsn_pairwise=CCMP
    EOF
    
    # hostapd hostapd.conf     # Quirk: hostapd.conf must be alone in the current directory (maybe SELinux restriction?)
