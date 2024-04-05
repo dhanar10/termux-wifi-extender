@@ -22,13 +22,13 @@ if [ "$(id -u)" != 0 ]; then
 	exit 1
 fi
 
-AP_IF=$WIFI_IF-ap	# $AP_IF must be $WIFI_IF-ap! 
-WIFI_SUBNET=$(ip route | grep wlan0 | cut -d' ' -f1)
+AP_IF=$WIFI_IF-ap	# $AP_IF must be $WIFI_IF-ap or it will not work
+WIFI_SUBNET=$(ip route | grep ' wlan0 ' | cut -d' ' -f1)
 
-cleanup()
+clean_up()
 {
-	iptables -D FORWARD -i $WIFI_IF -d 192.168.1.0/24 -j ACCEPT	# FIXME Hardcoded $WIFI_IF subnet 192.168.1.0/24
-	iptables -D FORWARD -i $AP_IF -s 192.168.1.0/24 -j ACCEPT	# FIXME Hardcoded $WIFI_IF subnet 192.168.1.0/24
+	iptables -D FORWARD -i $WIFI_IF -d $WIFI_SUBNET -j ACCEPT
+	iptables -D FORWARD -i $AP_IF -s $WIFI_SUBNET -j ACCEPT
 	echo 0 > /proc/sys/net/ipv4/ip_forward
 	echo 0 > /proc/sys/net/ipv4/conf/$WIFI_IF/arp_filter
 	echo 0 > /proc/sys/net/ipv4/conf/$AP_IF/arp_filter
@@ -36,16 +36,16 @@ cleanup()
         rm -rf "$SSID"
 }
 
-trap cleanup EXIT
+trap clean_up EXIT
 
 iw dev $WIFI_IF interface add $AP_IF type __ap
 ip link set up dev $AP_IF
-ip addr add 192.168.169.169/24 dev $AP_IF	# Arbitrary IP address different from $WIFI_IF
+ip addr add 192.168.169.169/24 dev $AP_IF	# FIXME Arbitrary IP address different from $WIFI_IF
 echo 1 > /proc/sys/net/ipv4/ip_forward
 echo 1 > /proc/sys/net/ipv4/conf/$WIFI_IF/arp_filter
 echo 1 > /proc/sys/net/ipv4/conf/$AP_IF/arp_filter
-iptables -I FORWARD -i $AP_IF -s 192.168.1.0/24 -j ACCEPT	# FIXME Hardcoded $WIFI_IF subnet 192.168.1.0/24
-iptables -I FORWARD -i $WIFI_IF -d 192.168.1.0/24 -j ACCEPT	# FIXME Hardcoded $WIFI_IF subnet 192.168.1.0/24
+iptables -I FORWARD -i $AP_IF -s $WIFI_SUBNET -j ACCEPT
+iptables -I FORWARD -i $WIFI_IF -d $WIFI_SUBNET -j ACCEPT
 
 mkdir -p "$SSID"
 cat << EOF > "$SSID/hostapd.conf"
@@ -55,10 +55,6 @@ interface=$AP_IF
 driver=nl80211
 # WLAN channel to use
 channel=11
-# limit the frequencies used to those allowed in the country
-#ieee80211d=1
-# the country code
-#country_code=ID
 # 802.11n support
 ieee80211n=1
 # QoS support, also required for full speed on 802.11n/ac/ax
