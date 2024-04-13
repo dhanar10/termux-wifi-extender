@@ -55,10 +55,6 @@ interface=$AP_IF
 driver=nl80211
 # WLAN channel to use
 channel=11
-# 802.11n support
-ieee80211n=1
-# QoS support, also required for full speed on 802.11n/ac/ax
-wmm_enabled=1
 # ser operation mode, what frequency to use
 hw_mode=g
 # network name
